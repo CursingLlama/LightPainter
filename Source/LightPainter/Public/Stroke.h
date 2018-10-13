@@ -16,7 +16,19 @@ public:
 	AStroke();
 
 	void Update(FVector CursorLocation);
+		
+private:
+	
+	//Config
+	UPROPERTY(EditDefaultsOnly) class UStaticMesh* SplineMesh;
+	UPROPERTY(EditDefaultsOnly) class UMaterialInterface* SplineMaterial;
 
-	
-	
+	//Components
+	UPROPERTY(VisibleAnywhere) class USceneComponent* Root = nullptr;
+
+	//State
+	UPROPERTY() FVector PreviousCursorLocation;
+
+	//Functions
+	class USplineMeshComponent* CreateSplineMesh();
 };
