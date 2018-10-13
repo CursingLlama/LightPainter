@@ -14,28 +14,35 @@ class LIGHTPAINTER_API AVRPawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AVRPawn();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
 	// Config
 	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandController> HandControllerClass;
+	
 
 	// Components
 	UPROPERTY(VisibleAnywhere) USceneComponent* VRRoot;
-
 	UPROPERTY(VisibleAnywhere) class UCameraComponent* Camera;
 
 	// Reference
-	UPROPERTY()	AHandController* RightHandController;
+	UPROPERTY()	AHandController* RightHand;
+	UPROPERTY()	AHandController* LeftHand;
 	
+	//Fuctions
+	void AdjustForPlaySpace();
+
+	void RightTriggerPressed();
+	void RightTriggerReleased();
 };

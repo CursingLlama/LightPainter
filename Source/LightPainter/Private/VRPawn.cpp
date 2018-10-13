@@ -2,9 +2,12 @@
 
 #include "VRPawn.h"
 #include "HandController.h"
+#include "Stroke.h"
 
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
+#include "XRMotionControllerBase.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -23,11 +26,16 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Adjust HMD position for Oculus Rift TO DO: check for nullptr issue with first line
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+	VRRoot->SetRelativeLocation(FVector(0, 0, 35));
 	
-	RightHandController = GetWorld()->SpawnActor<AHandController>(HandControllerClass);
-	if (RightHandController)
+	RightHand = GetWorld()->SpawnActor<AHandController>(HandControllerClass);
+	if (RightHand)
 	{
-		RightHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
 	}	
 }
 
@@ -36,16 +44,26 @@ void AVRPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AdjustForPlaySpace();
+
+}
+
+void AVRPawn::AdjustForPlaySpace()
+{
 	FVector CameraOffset = Camera->GetComponentLocation() - GetActorLocation();
 	CameraOffset.Z = 0;
 	AddActorWorldOffset(CameraOffset);
 	VRRoot->AddWorldOffset(-CameraOffset);
 }
 
+void AVRPawn::RightTriggerPressed() { RightHand->TriggerPressed(); }
+void AVRPawn::RightTriggerReleased() { RightHand->TriggerReleased(); }
+
 // Called to bind functionality to input
 void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
+	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
 }
-
