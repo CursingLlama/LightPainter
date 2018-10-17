@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VRPawn.h"
-#include "HandController.h"
+#include "HandControllerBase.h"
 #include "Stroke.h"
 #include "Saving/PainterSaveGame.h"
 
@@ -44,7 +44,7 @@ void AVRPawn::BeginPlay()
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 	VRRoot->SetRelativeLocation(FVector(0, 0, 35));
 	
-	RightHand = GetWorld()->SpawnActor<AHandController>(HandControllerClass);
+	RightHand = GetWorld()->SpawnActor<AHandControllerBase>(HandControllerClass);
 	if (RightHand)
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);

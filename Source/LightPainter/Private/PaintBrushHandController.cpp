@@ -1,31 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "HandController.h"
+#include "PaintBrushHandController.h"
 #include "Stroke.h"
 
 #include "Engine/World.h"
-#include "MotionControllerComponent.h"
 
 // Sets default values
-AHandController::AHandController()
+APaintBrushHandController::APaintBrushHandController()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionController"));
-	SetRootComponent(MotionController);
-	MotionController->SetShowDeviceModel(true);
+	
 }
 
 // Called when the game starts or when spawned
-void AHandController::BeginPlay()
+void APaintBrushHandController::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AHandController::Tick(float DeltaTime)
+void APaintBrushHandController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -36,12 +33,7 @@ void AHandController::Tick(float DeltaTime)
 	}
 }
 
-void AHandController::SetHand(FName Hand)
-{
-	MotionController->SetTrackingMotionSource(Hand);
-}
-
-void AHandController::TriggerPressed()
+void APaintBrushHandController::TriggerPressed()
 {
 	if (!StrokeClass) return;
 
@@ -49,7 +41,7 @@ void AHandController::TriggerPressed()
 	CurrentStroke = GetWorld()->SpawnActor<AStroke>(StrokeClass, Cursor, FRotator(0));
 }
 
-void AHandController::TriggerReleased()
+void APaintBrushHandController::TriggerReleased()
 {
 	CurrentStroke = nullptr;
 }

@@ -29,7 +29,7 @@ protected:
 private:
 
 	// Config
-	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandController> HandControllerClass;
+	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandControllerBase> HandControllerClass;
 	
 
 	// Components
@@ -37,8 +37,8 @@ private:
 	UPROPERTY(VisibleAnywhere) class UCameraComponent* Camera;
 
 	// Reference
-	UPROPERTY()	AHandController* RightHand;
-	UPROPERTY()	AHandController* LeftHand;
+	UPROPERTY()	AHandControllerBase* RightHand;
+	UPROPERTY()	AHandControllerBase* LeftHand;
 	
 	//Fuctions
 	void AdjustForPlaySpace();
