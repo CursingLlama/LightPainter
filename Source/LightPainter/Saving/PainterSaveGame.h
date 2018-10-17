@@ -17,8 +17,18 @@ class LIGHTPAINTER_API UPainterSaveGame : public USaveGame
 public:
 
 	static UPainterSaveGame* Create();
+	static UPainterSaveGame* Load();
 
 	bool Save();
 	
+	void SerializeFromWorld(UWorld* World);
+	void DeserializeToWorld(UWorld* World);
+
+private:
+
+	void ClearWorld(UWorld* World);
+
+	//State
+	UPROPERTY() TArray<TSubclassOf<class AStroke>> Strokes;
 	
 };

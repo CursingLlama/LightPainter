@@ -23,6 +23,18 @@ AVRPawn::AVRPawn()
 	Camera->SetupAttachment(VRRoot);
 }
 
+// Called to bind functionality to input
+void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
+	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
+
+	PlayerInputComponent->BindAction(FName("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
+	PlayerInputComponent->BindAction(FName("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
+}
+
 // Called when the game starts or when spawned
 void AVRPawn::BeginPlay()
 {
@@ -37,10 +49,7 @@ void AVRPawn::BeginPlay()
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
-	}
-
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	Painting->Save();
+	}		
 }
 
 // Called every frame
@@ -63,11 +72,24 @@ void AVRPawn::AdjustForPlaySpace()
 void AVRPawn::RightTriggerPressed() { RightHand->TriggerPressed(); }
 void AVRPawn::RightTriggerReleased() { RightHand->TriggerReleased(); }
 
-// Called to bind functionality to input
-void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AVRPawn::Save()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
-	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	Painting->SerializeFromWorld(GetWorld());
+	Painting->Save();
 }
+
+void AVRPawn::Load()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	if (Painting)
+	{
+		Painting->DeserializeToWorld(GetWorld());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Load file failed!"));
+	}
+}
+
+
