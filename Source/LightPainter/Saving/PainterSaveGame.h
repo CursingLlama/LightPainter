@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Stroke.h"
 #include "PainterSaveGame.generated.h"
 
 /**
@@ -29,6 +30,6 @@ private:
 	void ClearWorld(UWorld* World);
 
 	//State
-	UPROPERTY() TArray<TSubclassOf<class AStroke>> Strokes;
+	UPROPERTY() TArray<FStrokeState> Strokes;
 	
 };

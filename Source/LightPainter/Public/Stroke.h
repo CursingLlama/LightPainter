@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "Stroke.generated.h"
 
+USTRUCT()
+struct FStrokeState
+{
+	GENERATED_BODY()
+
+	UPROPERTY() TSubclassOf<class AStroke> Class;
+	UPROPERTY() TArray<FVector> Vertices;
+};
+
 UCLASS()
 class LIGHTPAINTER_API AStroke : public AActor
 {
@@ -16,6 +25,9 @@ public:
 	AStroke();
 
 	void Update(FVector CursorLocation);
+
+	FStrokeState SerializeToStruct() const;
+	static AStroke* SpawnFromStruct(UWorld* World, const FStrokeState& StrokeState);
 		
 private:
 	

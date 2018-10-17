@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PainterSaveGame.h"
-#include "Stroke.h"
+
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -29,16 +29,16 @@ void UPainterSaveGame::SerializeFromWorld(UWorld* World)
 
 	for (TActorIterator<AStroke> StrokeItr(World); StrokeItr; ++StrokeItr)
 	{
-		Strokes.Emplace(StrokeItr->GetClass());
+		Strokes.Emplace(StrokeItr->SerializeToStruct());
 	}
 }
 
 void UPainterSaveGame::DeserializeToWorld(UWorld * World)
 {
 	ClearWorld(World);
-	for (TSubclassOf<AStroke> StrokeClass : Strokes)
+	for (FStrokeState StrokeState : Strokes)
 	{
-		World->SpawnActor<AStroke>(StrokeClass);
+		AStroke::SpawnFromStruct(World, StrokeState);
 	}
 }
 

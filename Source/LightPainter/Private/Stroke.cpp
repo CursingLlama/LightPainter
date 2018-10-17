@@ -2,6 +2,7 @@
 
 #include "Stroke.h"
 
+#include "Engine/World.h"
 #include "Components/SceneComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
@@ -37,6 +38,33 @@ void AStroke::Update(FVector CursorLocation)
 		JointMeshes->AddInstance(FTransform(GetActorTransform().InverseTransformPosition(CursorLocation)));
 	}
 	PreviousCursorLocation = CursorLocation;
+}
+
+FStrokeState AStroke::SerializeToStruct() const
+{
+	FStrokeState State;
+	State.Class = this->GetClass();
+	for (int i = 0; i < JointMeshes->GetInstanceCount(); i++)
+	{
+		FTransform Transform;
+		JointMeshes->GetInstanceTransform(i, Transform, true);
+		State.Vertices.Emplace(Transform.GetLocation());
+	}
+	return State;
+}
+
+AStroke* AStroke::SpawnFromStruct(UWorld* World, const FStrokeState & StrokeState)
+{
+	AStroke* Stroke = World->SpawnActor<AStroke>(StrokeState.Class);
+	if (Stroke)
+	{
+		for (FVector Location : StrokeState.Vertices)
+		{
+			Stroke->Update(Location);
+		}
+		return Stroke;
+	}
+	return nullptr;
 }
 
 FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation)
