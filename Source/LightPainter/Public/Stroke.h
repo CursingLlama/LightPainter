@@ -19,16 +19,15 @@ public:
 		
 private:
 	
-	//Config
-	UPROPERTY(EditDefaultsOnly) class UStaticMesh* SplineMesh;
-	UPROPERTY(EditDefaultsOnly) class UMaterialInterface* SplineMaterial;
-
 	//Components
 	UPROPERTY(VisibleAnywhere) class USceneComponent* Root = nullptr;
+	UPROPERTY(VisibleAnywhere) class UInstancedStaticMeshComponent* StrokeMeshes = nullptr;
+	UPROPERTY(VisibleAnywhere) class UInstancedStaticMeshComponent* JointMeshes = nullptr;
 
 	//State
-	UPROPERTY() FVector PreviousCursorLocation;
+	UPROPERTY() FVector PreviousCursorLocation = FVector::ZeroVector;
 
 	//Functions
-	class USplineMeshComponent* CreateSplineMesh();
+	FTransform GetNextSegmentTransform(FVector CurrentLocation);
+
 };

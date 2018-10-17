@@ -4,6 +4,7 @@
 
 #include "Components/SceneComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Components/InstancedStaticMeshComponent.h"
 
 
 // Sets default values
@@ -14,28 +15,41 @@ AStroke::AStroke()
 
 	Root = CreateDefaultSubobject<USceneComponent>(FName("Root"));
 	SetRootComponent(Root);
+
+	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(FName("Stroke Mesh"));
+	StrokeMeshes->SetupAttachment(Root);
+
+	JointMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(FName("Joint Mesh"));
+	JointMeshes->SetupAttachment(Root);
 }
 
 void AStroke::Update(FVector CursorLocation)
 {
-	USplineMeshComponent* Spline = CreateSplineMesh();
-	FVector StartPos = GetActorTransform().InverseTransformPosition(CursorLocation);
-	FVector EndPos = GetActorTransform().InverseTransformPosition(PreviousCursorLocation);
-	Spline->SetStartAndEnd(StartPos, FVector::ZeroVector, EndPos, FVector::ZeroVector);
-
+	if (PreviousCursorLocation != FVector::ZeroVector)
+	{
+		if (StrokeMeshes)
+		{
+			StrokeMeshes->AddInstance(GetNextSegmentTransform(CursorLocation));
+		}		
+	}	
+	if (JointMeshes)
+	{
+		JointMeshes->AddInstance(FTransform(GetActorTransform().InverseTransformPosition(CursorLocation)));
+	}
 	PreviousCursorLocation = CursorLocation;
 }
 
-USplineMeshComponent * AStroke::CreateSplineMesh()
+FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation)
 {
-	USplineMeshComponent* NewSpline = NewObject<USplineMeshComponent>(this);
-	if (NewSpline)
-	{
-		NewSpline->SetMobility(EComponentMobility::Movable);
-		NewSpline->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		NewSpline->SetStaticMesh(SplineMesh);
-		NewSpline->SetMaterial(0, SplineMaterial);
-		NewSpline->RegisterComponent();
-	}
-	return NewSpline;
+	FTransform NewTransform;
+
+	NewTransform.SetLocation(GetActorTransform().InverseTransformPosition(PreviousCursorLocation));
+	
+	FVector StartNormal = PreviousCursorLocation.ForwardVector.GetSafeNormal();
+	FVector EndNormal = (CurrentLocation - PreviousCursorLocation).GetSafeNormal();
+	NewTransform.SetRotation(FQuat::FindBetweenNormals(StartNormal, EndNormal));
+	
+	NewTransform.SetScale3D(FVector((CurrentLocation - PreviousCursorLocation).Size(), 1, 1));
+
+	return NewTransform;
 }

@@ -3,6 +3,7 @@
 #include "VRPawn.h"
 #include "HandController.h"
 #include "Stroke.h"
+#include "Saving/PainterSaveGame.h"
 
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
@@ -36,7 +37,10 @@ void AVRPawn::BeginPlay()
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
-	}	
+	}
+
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	Painting->Save();
 }
 
 // Called every frame
