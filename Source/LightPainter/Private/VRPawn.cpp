@@ -49,7 +49,14 @@ void AVRPawn::BeginPlay()
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
-	}		
+	}
+
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	if (Painting && Painting->Save())
+	{
+		CurrentSlotName = Painting->GetSlotName();
+	}
+	
 }
 
 // Called every frame
@@ -73,15 +80,19 @@ void AVRPawn::RightTriggerPressed() { RightHand->TriggerPressed(); }
 void AVRPawn::RightTriggerReleased() { RightHand->TriggerReleased(); }
 
 void AVRPawn::Save()
-{
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	Painting->SerializeFromWorld(GetWorld());
-	Painting->Save();
+{	
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (Painting)
+	{
+		Painting->SerializeFromWorld(GetWorld());
+		Painting->Save();
+	}
+	
 }
 
 void AVRPawn::Load()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
 	if (Painting)
 	{
 		Painting->DeserializeToWorld(GetWorld());

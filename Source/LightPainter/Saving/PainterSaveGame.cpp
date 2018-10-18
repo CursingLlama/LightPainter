@@ -6,27 +6,30 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "Misc/Guid.h"
 
 
 UPainterSaveGame* UPainterSaveGame::Create() 
 {
-	return Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
+	UPainterSaveGame* GameSave = Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
+	GameSave->SlotName = FGuid::NewGuid().ToString();
+	return GameSave;
 }
 
-UPainterSaveGame* UPainterSaveGame::Load()
+UPainterSaveGame* UPainterSaveGame::Load(FString Slot)
 {
-	return Cast<UPainterSaveGame>(UGameplayStatics::LoadGameFromSlot(FString("Test"), 0));
+	return Cast<UPainterSaveGame>(UGameplayStatics::LoadGameFromSlot(Slot, 0));
 }
 
 bool UPainterSaveGame::Save()
 {
-	return UGameplayStatics::SaveGameToSlot(this, FString("Test"), 0);
+	return UGameplayStatics::SaveGameToSlot(this, SlotName, 0);
 }
 
 void UPainterSaveGame::SerializeFromWorld(UWorld* World)
 {
 	Strokes.Empty();
-
+	
 	for (TActorIterator<AStroke> StrokeItr(World); StrokeItr; ++StrokeItr)
 	{
 		Strokes.Emplace(StrokeItr->SerializeToStruct());

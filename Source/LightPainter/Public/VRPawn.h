@@ -31,15 +31,17 @@ private:
 	// Config
 	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandControllerBase> HandControllerClass;
 	
-
 	// Components
-	UPROPERTY(VisibleAnywhere) USceneComponent* VRRoot;
-	UPROPERTY(VisibleAnywhere) class UCameraComponent* Camera;
+	UPROPERTY(VisibleAnywhere) USceneComponent* VRRoot = nullptr;
+	UPROPERTY(VisibleAnywhere) class UCameraComponent* Camera = nullptr;
 
 	// Reference
-	UPROPERTY()	AHandControllerBase* RightHand;
-	UPROPERTY()	AHandControllerBase* LeftHand;
+	UPROPERTY()	AHandControllerBase* RightHand = nullptr;
+	UPROPERTY()	AHandControllerBase* LeftHand = nullptr;
 	
+	//State
+	UPROPERTY() FString CurrentSlotName;
+
 	//Fuctions
 	void AdjustForPlaySpace();
 
