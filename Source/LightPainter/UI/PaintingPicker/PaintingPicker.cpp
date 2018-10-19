@@ -2,6 +2,7 @@
 
 #include "PaintingPicker.h"
 #include "PaintingGrid.h"
+#include "Saving/PainterSaveGameIndex.h"
 
 #include "Components/WidgetComponent.h"
 
@@ -26,11 +27,18 @@ APaintingPicker::APaintingPicker()
 void APaintingPicker::BeginPlay()
 {
 	Super::BeginPlay();
-	UPaintingGrid* UserWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
-	if (UserWidget)
+
+	UPaintingGrid* Grid = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
+	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
+	if (Grid && SaveGameIndex)
 	{
-		UserWidget->AddPainting();
-	}
+		int32 Index = 0;
+		for (FString SlotName : SaveGameIndex->GetSlotNames())
+		{
+			Grid->AddPainting(Index++, SlotName);
+		}
+	}	
+
 }
 
 // Called every frame

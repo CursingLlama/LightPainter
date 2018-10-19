@@ -52,7 +52,7 @@ void AVRPawn::BeginPlay()
 	}
 
 	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	if (Painting && Painting->Save())
+	if (Painting)
 	{
 		CurrentSlotName = Painting->GetSlotName();
 	}

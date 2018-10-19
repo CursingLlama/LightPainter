@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PainterSaveGame.h"
-
+#include "PainterSaveGameIndex.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -13,6 +13,10 @@ UPainterSaveGame* UPainterSaveGame::Create()
 {
 	UPainterSaveGame* GameSave = Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
 	GameSave->SlotName = FGuid::NewGuid().ToString();
+	if (!GameSave->Save()) return nullptr;
+	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
+	Index->AddSaveGame(GameSave);
+	Index->Save();
 	return GameSave;
 }
 
