@@ -13,8 +13,13 @@ UCLASS()
 class LIGHTPAINTER_API APaintingGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+protected:
+
+	void InitGame(const FString & MapName, const FString & Options, FString & ErrorMessage) override;
 	
-	
-	
-	
+private:
+
+	//State
+	FString SlotName;
 };
