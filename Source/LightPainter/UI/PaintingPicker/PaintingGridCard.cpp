@@ -19,6 +19,5 @@ void UPaintingGridCard::SetPaintingName(FString InPaintingName)
 void UPaintingGridCard::CardButtonClicked()
 {
 	UStereoLayerFunctionLibrary::ShowSplashScreen();
-	UGameplayStatics::OpenLevel(GetWorld(), "Canvas", false, "SlotName=" + PaintingName);
-	UStereoLayerFunctionLibrary::HideSplashScreen();
+	UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + PaintingName);	
 }

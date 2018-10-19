@@ -3,12 +3,20 @@
 #include "VRPawn.h"
 #include "HandControllerBase.h"
 #include "Stroke.h"
+#include "PaintingGameMode.h"
 #include "Saving/PainterSaveGame.h"
 
 #include "Engine/World.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/StereoLayerFunctionLibrary.h"
+
 #include "Camera/CameraComponent.h"
+
 #include "XRMotionControllerBase.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+
+
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -32,7 +40,7 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
 
 	PlayerInputComponent->BindAction(FName("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
-	PlayerInputComponent->BindAction(FName("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
+	//PlayerInputComponent->BindAction(FName("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
 }
 
 // Called when the game starts or when spawned
@@ -49,12 +57,6 @@ void AVRPawn::BeginPlay()
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
-	}
-
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	if (Painting)
-	{
-		CurrentSlotName = Painting->GetSlotName();
 	}
 	
 }
@@ -81,26 +83,12 @@ void AVRPawn::RightTriggerReleased() { RightHand->TriggerReleased(); }
 
 void AVRPawn::Save()
 {	
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (Painting)
+	APaintingGameMode* GameMode = Cast<APaintingGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
 	{
-		Painting->SerializeFromWorld(GetWorld());
-		Painting->Save();
-	}
-	
+		GameMode->Save();
+		UStereoLayerFunctionLibrary::ShowSplashScreen();
+		UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+		UStereoLayerFunctionLibrary::HideSplashScreen();
+	}	
 }
-
-void AVRPawn::Load()
-{
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (Painting)
-	{
-		Painting->DeserializeToWorld(GetWorld());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Load file failed!"));
-	}
-}
-
-

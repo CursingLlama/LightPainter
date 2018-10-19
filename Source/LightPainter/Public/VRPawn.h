@@ -49,5 +49,4 @@ private:
 	void RightTriggerReleased();
 
 	void Save();
-	void Load();
 };
