@@ -3,15 +3,18 @@
 #include "PaintingGrid.h"
 #include "PaintingGridCard.h"
 #include "NewPaintingGridCard.h"
+#include "PaginationDot.h"
 
 #include "Components/UniformGridPanel.h"
 #include "Components/SizeBox.h"
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
 
 
 
 void UPaintingGrid::AddPainting(class APaintingPicker* PaintingPicker, int32 Index, FString PaintingName)
 {
-	if (!(PaintingGrid || GridCardClass)) return;
+	if (!PaintingGrid || !GridCardClass) return;
 	
 	UPaintingGridCard* NewWidget = CreateWidget<UPaintingGridCard>(GetWorld(), GridCardClass);
 	if (NewWidget)
@@ -30,7 +33,7 @@ void UPaintingGrid::AddPainting(class APaintingPicker* PaintingPicker, int32 Ind
 
 void UPaintingGrid::AddNewButton(class APaintingPicker* PaintingPicker, int32 Index)
 {
-	if (!(PaintingGrid || NewGridCardClass)) return;
+	if (!PaintingGrid || !NewGridCardClass) return;
 
 	UNewPaintingGridCard* NewWidget = CreateWidget<UNewPaintingGridCard>(GetWorld(), NewGridCardClass);
 	if (NewWidget)
@@ -44,4 +47,39 @@ void UPaintingGrid::AddNewButton(class APaintingPicker* PaintingPicker, int32 In
 		}
 	}
 
+}
+
+void UPaintingGrid::ClearCards()
+{
+	for (int32 Index = 0; Index < NumCards; Index++)
+	{
+		USizeBox* SizeBox = Cast<USizeBox>(PaintingGrid->GetChildAt(Index));
+		if (SizeBox)
+		{
+			SizeBox->ClearChildren();
+		}
+	}
+	
+}
+
+void UPaintingGrid::AddPaginationDot(bool bIsActive)
+{
+	if (!PaginationDots || !PaginationDotClass) return;
+
+	UPaginationDot* Dot = CreateWidget<UPaginationDot>(GetWorld(), PaginationDotClass);
+	if (Dot)
+	{
+		Dot->SetActive(bIsActive);
+		
+		UHorizontalBoxSlot* Slot = PaginationDots->AddChildToHorizontalBox(Dot);
+		Slot->SetPadding(FMargin(PaginationDotPadding, 0));
+	}
+}
+
+void UPaintingGrid::ClearPaginationDots()
+{
+	if (PaginationDots)
+	{
+		PaginationDots->ClearChildren();
+	}
 }

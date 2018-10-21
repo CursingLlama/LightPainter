@@ -28,6 +28,16 @@ void UPainterSaveGameIndex::AddSaveGame(UPainterSaveGame * SaveGame)
 	SlotNameList.Emplace(SaveGame->GetSlotName());
 }
 
+bool UPainterSaveGameIndex::RemoveSaveGame(FString SlotName)
+{
+	if (SlotNameList.Remove(SlotName) > 0)
+	{
+		Save();
+		return true;
+	}	
+	return false;
+}
+
 TArray<FString> UPainterSaveGameIndex::GetSlotNames() const
 {
 	return SlotNameList;

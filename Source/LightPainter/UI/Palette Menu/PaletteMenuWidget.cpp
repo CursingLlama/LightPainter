@@ -18,5 +18,4 @@ bool UPaletteMenuWidget::Initialize()
 void UPaletteMenuWidget::BackButtonPressed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Back button pressed"));
-
 }

@@ -20,6 +20,23 @@ UPainterSaveGame* UPainterSaveGame::Create()
 	return GameSave;
 }
 
+bool UPainterSaveGame::Delete(FString Slot)
+{
+	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
+	if (!Index) return false;
+	if (!UGameplayStatics::DeleteGameInSlot(Slot, 0))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unable to delete %s file."), *Slot);
+		return false;
+	}
+	if (!Index->RemoveSaveGame(Slot))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unable to remove %s from save game index."), *Slot);
+		return false;
+	}	
+	return true;
+}
+
 UPainterSaveGame* UPainterSaveGame::Load(FString Slot)
 {
 	return Cast<UPainterSaveGame>(UGameplayStatics::LoadGameFromSlot(Slot, 0));

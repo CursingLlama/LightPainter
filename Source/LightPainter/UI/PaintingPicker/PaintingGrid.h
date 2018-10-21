@@ -17,13 +17,20 @@ class LIGHTPAINTER_API UPaintingGrid : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable) void AddPainting(class APaintingPicker* PaintingPicker, int32 Index, FString PaintingName);
 	UFUNCTION(BlueprintCallable) void AddNewButton(class APaintingPicker* PaintingPicker, int32 Index);
+	UFUNCTION(BlueprintCallable) void ClearCards();
+	UFUNCTION(BlueprintCallable) void AddPaginationDot(bool bIsActive);
+	UFUNCTION(BlueprintCallable) void ClearPaginationDots();
 	
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget)) class UUniformGridPanel* PaintingGrid = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget)) class UHorizontalBox* PaginationDots = nullptr;
 	
 private:
+	UPROPERTY(EditDefaultsOnly) float PaginationDotPadding = 8;
+	UPROPERTY(EditDefaultsOnly) int32 NumCards = 4;
 	
 	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UPaintingGridCard> GridCardClass;
 	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UNewPaintingGridCard> NewGridCardClass;
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UPaginationDot> PaginationDotClass;
 };

@@ -18,6 +18,7 @@ class LIGHTPAINTER_API UPainterSaveGame : public USaveGame
 public:
 
 	static UPainterSaveGame* Create();
+	static bool Delete(FString Slot);
 	static UPainterSaveGame* Load(FString Slot);
 
 	bool Save();

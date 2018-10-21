@@ -20,8 +20,9 @@ public:
 	bool Save();
 
 	void AddSaveGame(class UPainterSaveGame* SaveGame);
-	TArray<FString> GetSlotNames() const;
+	bool RemoveSaveGame(FString SlotName);
 
+	TArray<FString> GetSlotNames() const;
 	static const FString SLOT_NAME;
 
 private:

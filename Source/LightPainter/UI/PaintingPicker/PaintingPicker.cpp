@@ -48,6 +48,12 @@ void APaintingPicker::RefreshSlots()
 	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
 	if (Grid && SaveGameIndex)
 	{
+		Grid->ClearPaginationDots();
+		Grid->AddPaginationDot(true);
+		Grid->AddPaginationDot(false);
+		Grid->AddPaginationDot(false);
+
+		Grid->ClearCards();
 		int32 Index = 0;
 		for (FString SlotName : SaveGameIndex->GetSlotNames())
 		{
@@ -59,7 +65,6 @@ void APaintingPicker::RefreshSlots()
 
 void APaintingPicker::AddPainting()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Adding new painting..."));
 	UStereoLayerFunctionLibrary::ShowSplashScreen();
 	UPainterSaveGame* NewPainting = UPainterSaveGame::Create();
 	if (NewPainting)
@@ -73,6 +78,5 @@ void APaintingPicker::AddPainting()
 void APaintingPicker::DeletePainting(FString SlotName)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Deleting: %s"), *SlotName);
-
-	RefreshSlots();
+	if (UPainterSaveGame::Delete(SlotName))	RefreshSlots();
 }
