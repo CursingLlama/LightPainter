@@ -18,6 +18,7 @@ public:
 
 	void Save();
 	void Load();
+	UFUNCTION(BlueprintCallable) void QuitToMenu();
 
 protected:
 

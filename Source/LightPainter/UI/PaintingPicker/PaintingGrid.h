@@ -15,7 +15,8 @@ class LIGHTPAINTER_API UPaintingGrid : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable) void AddPainting(int32 Index, FString PaintingName);
+	UFUNCTION(BlueprintCallable) void AddPainting(class APaintingPicker* PaintingPicker, int32 Index, FString PaintingName);
+	UFUNCTION(BlueprintCallable) void AddNewButton(class APaintingPicker* PaintingPicker, int32 Index);
 	
 protected:
 
@@ -24,4 +25,5 @@ protected:
 private:
 	
 	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UPaintingGridCard> GridCardClass;
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UNewPaintingGridCard> NewGridCardClass;
 };

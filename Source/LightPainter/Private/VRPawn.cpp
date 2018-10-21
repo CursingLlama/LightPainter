@@ -52,11 +52,18 @@ void AVRPawn::BeginPlay()
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 	VRRoot->SetRelativeLocation(FVector(0, 0, 35));
 	
-	RightHand = GetWorld()->SpawnActor<AHandControllerBase>(HandControllerClass);
+	RightHand = GetWorld()->SpawnActor<AHandControllerBase>(RightHandControllerClass);
 	if (RightHand)
 	{
 		RightHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHand->SetHand(FXRMotionControllerBase::RightHandSourceId);
+	}
+
+	LeftHand = GetWorld()->SpawnActor<AHandControllerBase>(LeftHandControllerClass);
+	if (LeftHand)
+	{
+		LeftHand->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+		LeftHand->SetHand(FXRMotionControllerBase::LeftHandSourceId);
 	}
 	
 }
@@ -87,8 +94,6 @@ void AVRPawn::Save()
 	if (GameMode)
 	{
 		GameMode->Save();
-		UStereoLayerFunctionLibrary::ShowSplashScreen();
-		UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
-		UStereoLayerFunctionLibrary::HideSplashScreen();
+		GameMode->QuitToMenu();
 	}	
 }

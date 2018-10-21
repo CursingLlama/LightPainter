@@ -29,7 +29,8 @@ protected:
 private:
 
 	// Config
-	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandControllerBase> HandControllerClass;
+	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandControllerBase> RightHandControllerClass;
+	UPROPERTY(EditDefaultsOnly)	TSubclassOf<class AHandControllerBase> LeftHandControllerClass;
 	
 	// Components
 	UPROPERTY(VisibleAnywhere) USceneComponent* VRRoot = nullptr;

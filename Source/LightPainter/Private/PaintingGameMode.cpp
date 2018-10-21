@@ -45,3 +45,10 @@ void APaintingGameMode::Load()
 		UE_LOG(LogTemp, Warning, TEXT("Load file failed!"));
 	}
 }
+
+void APaintingGameMode::QuitToMenu()
+{
+	UStereoLayerFunctionLibrary::ShowSplashScreen();
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	UStereoLayerFunctionLibrary::HideSplashScreen();
+}

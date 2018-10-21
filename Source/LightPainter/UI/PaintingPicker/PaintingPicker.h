@@ -17,16 +17,20 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	void AddPainting();
+	void DeletePainting(FString SlotName);
 
 protected:
-
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;	
 
 private:	
-	
+	// Components
 	UPROPERTY(VisibleAnywhere) class USceneComponent* Root = nullptr;
 	UPROPERTY(VisibleAnywhere) class UWidgetComponent* PaintingGrid = nullptr;
-	UPROPERTY(VisibleAnywhere) class UWidgetComponent* ActionBar = nullptr;
+	///UPROPERTY(VisibleAnywhere) class UWidgetComponent* ActionBar = nullptr;
 		
+	//Functions
+	void RefreshSlots();
 };

@@ -17,16 +17,21 @@ class LIGHTPAINTER_API UPaintingGridCard : public UUserWidget
 public:
 
 	void SetPaintingName(FString PaintingName);
+	bool Initialize() override;
+	void SetPaintingPicker(class APaintingPicker* NewPaintingPicker);
 	
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget)) class UTextBlock* SlotName;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget)) class UButton* CardButton;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget)) class UButton* DeleteButton;
 
 private:
 
 	UFUNCTION() void CardButtonClicked();
+	UFUNCTION() void DeleteButtonClicked();
 
 	//State
-	FString PaintingName;
+	UPROPERTY() FString PaintingName;
+	UPROPERTY() class APaintingPicker* PaintingPicker;
 };

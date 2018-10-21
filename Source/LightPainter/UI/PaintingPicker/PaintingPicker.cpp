@@ -2,9 +2,13 @@
 
 #include "PaintingPicker.h"
 #include "PaintingGrid.h"
+#include "Saving/PainterSaveGame.h"
 #include "Saving/PainterSaveGameIndex.h"
 
 #include "Components/WidgetComponent.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/StereoLayerFunctionLibrary.h"
 
 
 // Sets default values
@@ -19,8 +23,8 @@ APaintingPicker::APaintingPicker()
 	PaintingGrid = CreateDefaultSubobject<UWidgetComponent>(FName("PaintingGrid"));
 	PaintingGrid->SetupAttachment(Root);
 
-	ActionBar = CreateDefaultSubobject<UWidgetComponent>(FName("ActionBar"));
-	ActionBar->SetupAttachment(Root);
+	//ActionBar = CreateDefaultSubobject<UWidgetComponent>(FName("ActionBar"));
+	//ActionBar->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -28,17 +32,7 @@ void APaintingPicker::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UPaintingGrid* Grid = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
-	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
-	if (Grid && SaveGameIndex)
-	{
-		int32 Index = 0;
-		for (FString SlotName : SaveGameIndex->GetSlotNames())
-		{
-			Grid->AddPainting(Index++, SlotName);
-		}
-	}	
-
+	RefreshSlots();
 }
 
 // Called every frame
@@ -48,3 +42,37 @@ void APaintingPicker::Tick(float DeltaTime)
 
 }
 
+void APaintingPicker::RefreshSlots()
+{
+	UPaintingGrid* Grid = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
+	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
+	if (Grid && SaveGameIndex)
+	{
+		int32 Index = 0;
+		for (FString SlotName : SaveGameIndex->GetSlotNames())
+		{
+			Grid->AddPainting(this, Index++, SlotName);
+		}
+		Grid->AddNewButton(this, Index++);
+	}
+}
+
+void APaintingPicker::AddPainting()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Adding new painting..."));
+	UStereoLayerFunctionLibrary::ShowSplashScreen();
+	UPainterSaveGame* NewPainting = UPainterSaveGame::Create();
+	if (NewPainting)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + NewPainting->GetSlotName());
+	}	
+	RefreshSlots();
+	UStereoLayerFunctionLibrary::HideSplashScreen();
+}
+
+void APaintingPicker::DeletePainting(FString SlotName)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Deleting: %s"), *SlotName);
+
+	RefreshSlots();
+}
