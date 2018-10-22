@@ -54,12 +54,17 @@ void APaintingPicker::RefreshSlots()
 	if (PaintingGridWidget && SaveGameIndex)
 	{
 		PaintingGridWidget->ClearCards();
-		int32 Index = 0;
-		for (FString SlotName : SaveGameIndex->GetSlotNames())
+
+		int32 StartOffset = CurrentPage * PaintingGridWidget->SlotsPerPage();
+		int32 SlotsOnPage = FMath::Clamp<int32>(SaveGameIndex->GetSlotNames().Num() - StartOffset, 0, PaintingGridWidget->SlotsPerPage());
+		for (int32 i = 0; i < SlotsOnPage; i++)
 		{
-			PaintingGridWidget->AddPainting(this, Index++, SlotName);
+			PaintingGridWidget->AddPainting(this, i, SaveGameIndex->GetSlotNames()[StartOffset + i]);
 		}
-		PaintingGridWidget->AddNewButton(this, Index++);
+		if (SlotsOnPage < PaintingGridWidget->SlotsPerPage())
+		{
+			PaintingGridWidget->AddNewButton(this, SlotsOnPage);
+		}
 	}
 }
 
