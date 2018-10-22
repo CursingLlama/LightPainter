@@ -51,7 +51,7 @@ void UPaintingGrid::AddNewButton(class APaintingPicker* PaintingPicker, int32 In
 
 void UPaintingGrid::ClearCards()
 {
-	for (int32 Index = 0; Index < NumCards; Index++)
+	for (int32 Index = 0; Index < SlotsPerPage(); Index++)
 	{
 		USizeBox* SizeBox = Cast<USizeBox>(PaintingGrid->GetChildAt(Index));
 		if (SizeBox)
@@ -82,4 +82,10 @@ void UPaintingGrid::ClearPaginationDots()
 	{
 		PaginationDots->ClearChildren();
 	}
+}
+
+int32 UPaintingGrid::SlotsPerPage() const
+{
+	if (!PaintingGrid) return -1;
+	return PaintingGrid->GetChildrenCount();
 }

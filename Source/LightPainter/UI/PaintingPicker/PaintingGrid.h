@@ -20,6 +20,7 @@ public:
 	UFUNCTION(BlueprintCallable) void ClearCards();
 	UFUNCTION(BlueprintCallable) void AddPaginationDot(bool bIsActive);
 	UFUNCTION(BlueprintCallable) void ClearPaginationDots();
+	UFUNCTION(BlueprintCallable) int32 SlotsPerPage() const;
 	
 protected:
 
@@ -28,7 +29,6 @@ protected:
 	
 private:
 	UPROPERTY(EditDefaultsOnly) float PaginationDotPadding = 8;
-	UPROPERTY(EditDefaultsOnly) int32 NumCards = 4;
 	
 	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UPaintingGridCard> GridCardClass;
 	UPROPERTY(EditDefaultsOnly) TSubclassOf<class UNewPaintingGridCard> NewGridCardClass;

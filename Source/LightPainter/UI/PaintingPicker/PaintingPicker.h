@@ -21,6 +21,8 @@ public:
 	void AddPainting();
 	void DeletePainting(FString SlotName);
 
+	void UpdateCurrentPage(int32 Offset);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;	
@@ -31,6 +33,13 @@ private:
 	UPROPERTY(VisibleAnywhere) class UWidgetComponent* PaintingGrid = nullptr;
 	///UPROPERTY(VisibleAnywhere) class UWidgetComponent* ActionBar = nullptr;
 		
+	//State
+	UPROPERTY() class UPaintingGrid* PaintingGridWidget;
+	UPROPERTY(VisibleAnywhere) int32 CurrentPage = 0;
+
 	//Functions
+	void Refresh();
 	void RefreshSlots();
+	void RefreshDots();
+	int32 GetNumberOfPages() const;	
 };

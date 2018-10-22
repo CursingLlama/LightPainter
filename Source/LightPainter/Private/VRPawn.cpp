@@ -4,9 +4,11 @@
 #include "HandControllerBase.h"
 #include "Stroke.h"
 #include "PaintingGameMode.h"
+#include "UI/PaintingPicker/PaintingPicker.h"
 #include "Saving/PainterSaveGame.h"
 
 #include "Engine/World.h"
+#include "EngineUtils.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/StereoLayerFunctionLibrary.h"
@@ -38,6 +40,8 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(FName("Paint"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
+
+	PlayerInputComponent->BindAxis(FName("Paginate"), this, &AVRPawn::PaginateAxisInput);
 
 	PlayerInputComponent->BindAction(FName("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
 	//PlayerInputComponent->BindAction(FName("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
@@ -87,6 +91,29 @@ void AVRPawn::AdjustForPlaySpace()
 
 void AVRPawn::RightTriggerPressed() { RightHand->TriggerPressed(); }
 void AVRPawn::RightTriggerReleased() { RightHand->TriggerReleased(); }
+
+void AVRPawn::PaginateAxisInput(float AxisInput)
+{
+	if (AxisInput > AxisDeadZone && !bChangedPage)
+	{
+		bChangedPage = true;
+		UpdateCurrentPage(1);
+	}
+	if (AxisInput < -AxisDeadZone && !bChangedPage)
+	{
+		bChangedPage = true;
+		UpdateCurrentPage(-1);
+	}
+	if (AxisInput < AxisDeadZone && AxisInput > -AxisDeadZone) bChangedPage = false;
+}
+
+void AVRPawn::UpdateCurrentPage(int32 Offset)
+{
+	for (TActorIterator<APaintingPicker> ActorItr(GetWorld()) ; ActorItr; ++ActorItr)
+	{
+		ActorItr->UpdateCurrentPage(Offset);
+	}
+}
 
 void AVRPawn::Save()
 {	

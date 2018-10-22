@@ -32,51 +32,77 @@ void APaintingPicker::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RefreshSlots();
+	PaintingGridWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
+	Refresh();
 }
 
 // Called every frame
 void APaintingPicker::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
+}
 
+void APaintingPicker::Refresh()
+{
+	RefreshDots();
+	RefreshSlots();
 }
 
 void APaintingPicker::RefreshSlots()
 {
-	UPaintingGrid* Grid = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
 	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
-	if (Grid && SaveGameIndex)
+	if (PaintingGridWidget && SaveGameIndex)
 	{
-		Grid->ClearPaginationDots();
-		Grid->AddPaginationDot(true);
-		Grid->AddPaginationDot(false);
-		Grid->AddPaginationDot(false);
-
-		Grid->ClearCards();
+		PaintingGridWidget->ClearCards();
 		int32 Index = 0;
 		for (FString SlotName : SaveGameIndex->GetSlotNames())
 		{
-			Grid->AddPainting(this, Index++, SlotName);
+			PaintingGridWidget->AddPainting(this, Index++, SlotName);
 		}
-		Grid->AddNewButton(this, Index++);
+		PaintingGridWidget->AddNewButton(this, Index++);
 	}
+}
+
+void APaintingPicker::RefreshDots()
+{
+	if (PaintingGridWidget)
+	{
+		PaintingGridWidget->ClearPaginationDots();
+		for (int32 i = 0; i < GetNumberOfPages(); i++)
+		{
+			PaintingGridWidget->AddPaginationDot(i == CurrentPage);
+		}
+	}	
+}
+
+int32 APaintingPicker::GetNumberOfPages() const
+{
+	UPainterSaveGameIndex* SaveGameIndex = UPainterSaveGameIndex::Load();
+	if (!SaveGameIndex || !PaintingGridWidget) return -1;
+
+	int32 NumberOfSlots = SaveGameIndex->GetSlotNames().Num() + 1;
+	return FMath::DivideAndRoundUp(NumberOfSlots, PaintingGridWidget->SlotsPerPage());
 }
 
 void APaintingPicker::AddPainting()
 {
-	UStereoLayerFunctionLibrary::ShowSplashScreen();
+	//UStereoLayerFunctionLibrary::ShowSplashScreen();
 	UPainterSaveGame* NewPainting = UPainterSaveGame::Create();
-	if (NewPainting)
+	/*if (NewPainting)
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + NewPainting->GetSlotName());
-	}	
-	RefreshSlots();
-	UStereoLayerFunctionLibrary::HideSplashScreen();
+	}*/
+	Refresh();
+	//UStereoLayerFunctionLibrary::HideSplashScreen();
 }
 
 void APaintingPicker::DeletePainting(FString SlotName)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Deleting: %s"), *SlotName);
-	if (UPainterSaveGame::Delete(SlotName))	RefreshSlots();
+	if (UPainterSaveGame::Delete(SlotName))	Refresh();
+}
+
+void APaintingPicker::UpdateCurrentPage(int32 Offset)
+{
+	CurrentPage = FMath::Clamp<int32>(CurrentPage + Offset, 0, GetNumberOfPages() - 1);
+	Refresh();
 }

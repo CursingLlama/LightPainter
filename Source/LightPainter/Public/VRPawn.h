@@ -42,12 +42,16 @@ private:
 	
 	//State
 	UPROPERTY() FString CurrentSlotName;
+	UPROPERTY(EditAnywhere) float AxisDeadZone = 0.5;
+	UPROPERTY() bool bChangedPage = false;
 
 	//Fuctions
 	void AdjustForPlaySpace();
 
 	void RightTriggerPressed();
 	void RightTriggerReleased();
+	void PaginateAxisInput(float AxisInput);
+	void UpdateCurrentPage(int32 Offset);
 
 	void Save();
 };
